@@ -1,15 +1,15 @@
 'use strict'
 
+import paths from '../../config/paths'
+
 const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware')
 const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware')
 const ignoredFiles = require('react-dev-utils/ignoredFiles')
-const config = require('../../webpack/webpack.config.dev')
-const paths = require('../../config/paths')
 
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
 const host = process.env.HOST || '0.0.0.0'
 
-module.exports = function createDevServerConfig(proxy, allowedHost) {
+export default function createDevServerConfig(proxy, allowedHost) {
     return {
         // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
         // websites from potentially accessing local content through DNS rebinding:
@@ -62,7 +62,7 @@ module.exports = function createDevServerConfig(proxy, allowedHost) {
         hot: true,
         // It is important to tell WebpackDevServer to use the same "root" path
         // as we specified in the config. In development, we always serve from /.
-        publicPath: config.output.publicPath,
+        publicPath: '/',
         // WebpackDevServer is noisy by default so we emit custom message instead
         // by listening to the compiler events with `compiler.plugin` calls above.
         quiet: true,

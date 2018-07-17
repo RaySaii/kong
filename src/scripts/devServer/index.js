@@ -1,10 +1,12 @@
-const paths = require('../../config/paths')
-import {createCompiler, prepareProxy, prepareUrls} from 'react-dev-utils/WebpackDevServerUtils'
+import paths from '../../config/paths'
+import config from '../../config/webpack.config.dev'
+import createDevServerConfig from './webpackDevServer.config'
+import {createCompiler, prepareProxy, prepareUrls} from './WebpackDevServerUtils'
 import openBrowser from 'react-dev-utils/openBrowser'
 import clearConsole from 'react-dev-utils/clearConsole'
 import WebpackDevServer from 'webpack-dev-server'
 import webpack from 'webpack'
-import chalk from 'chalk'; 
+import chalk from 'chalk'
 
 const isInteractive = process.stdout.isTTY
 
@@ -13,8 +15,6 @@ export default function startDevServer(HOST, port) {
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
     const appName = require(paths.appPackageJson).name
     const urls = prepareUrls(protocol, HOST, port)
-    const config = require('../../webpack/webpack.config.dev')
-    const createDevServerConfig = require('./webpackDevServer.config')
     // Create a webpack compiler that is configured with custom messages.
     const compiler = createCompiler(webpack, config, appName, urls)
     // Load proxy config
@@ -31,7 +31,7 @@ export default function startDevServer(HOST, port) {
             return console.log(err)
         }
         if (isInteractive) {
-            clearConsole()
+            // clearConsole()
         }
         console.log(chalk.cyan('Starting the development server...\n'))
         openBrowser(urls.localUrlForBrowser)

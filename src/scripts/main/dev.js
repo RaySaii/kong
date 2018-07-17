@@ -1,9 +1,8 @@
 'use strict'
 
 import FilesGenerator from '../FilesGenerator'
-import startDevServer from '../devServer/index'
-
-const paths = require('../../config/paths')
+import paths from '../../config/paths'
+import watch from '../watch'
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -13,7 +12,6 @@ process.on('unhandledRejection', err => {
 })
 
 // Ensure environment variables are read.
-require('../../config/env')
 const chalk = require('chalk')
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles')
 const {
@@ -52,9 +50,9 @@ if (process.env.HOST) {
 
 buildDll('development')
     .then(() => FilesGenerator.generate())
-    .then(() => process.env.APP_INDEX = paths.resolveApp('src/pages/.kong/kong.js'))
     .then(() => choosePort(HOST, DEFAULT_PORT))
     .then((port) => {
+            const startDevServer = require('../devServer').default
             if (port !== null) {
                 // We have not found a port.
                 return startDevServer(HOST, port)
@@ -68,12 +66,20 @@ buildDll('development')
                 process.exit()
             })
         })
-
-        // const watcher = watch(paths.appConfig).on('all', (e, path) => {
-        //     devServer.close()
-        //     watcher.close()
-        //     process.send({ type: 'RESTART' })
-        // })
+        const addWatcher = watch(paths.appSrcPages).on('add', (e, path) => {
+            console.log(e, path)
+            FilesGenerator.reBuild()
+            // devServer.close()
+            // watcher.close()
+            // process.send({ type: 'RESTART' })
+        })
+        const removeWatcher=watch(paths.appSrcPages).on('unlink', (e, path) => {
+            console.log(e, path)
+            FilesGenerator.reBuild()
+            // devServer.close()
+            // watcher.close()
+            // process.send({ type: 'RESTART' })
+        })
     })
     .catch(err => {
         if (err && err.message) {

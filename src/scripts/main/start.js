@@ -1,5 +1,6 @@
 import getPaths from '../getPaths'
 import {fork} from 'child_process'
+import {run} from '@cycle/rxjs-run'
 
 process.env.BABEL_ENV = 'development'
 process.env.NODE_ENV = 'development'
@@ -16,5 +17,14 @@ function start(devScriptPath) {
         // send(data)
     })
 }
-
+//
+// function main(sources){
+//     const server=
+//     return {
+//         message:sources.message$
+//     }
+// }
+// run(main,{
+//     message:
+// })
 start(getPaths('scripts/main/dev'))
