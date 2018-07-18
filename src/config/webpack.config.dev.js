@@ -29,7 +29,10 @@ const babelLoader = {
     loader: require.resolve('babel-loader'),
     options: {
         presets: [ require.resolve('babel-preset-react-app') ],
-        plugins: [],
+        plugins: [
+            [ 'lodash' ],
+            [ 'import', { style: 'css', libraryName: 'antd' } ],
+        ],
         cacheDirectory: true,
         highlightCode: true,
     },

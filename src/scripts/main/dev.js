@@ -3,6 +3,7 @@
 import FilesGenerator from '../FilesGenerator'
 import paths from '../../config/paths'
 import watch from '../watch'
+import createKongDevMiddleware from '../routes/createKongDevMiddleware'
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -52,10 +53,11 @@ buildDll('development')
     .then(() => FilesGenerator.generate())
     .then(() => choosePort(HOST, DEFAULT_PORT))
     .then((port) => {
-            const startDevServer = require('../devServer').default
+            const createDevServer = require('../devServer').default
             if (port !== null) {
                 // We have not found a port.
-                return startDevServer(HOST, port)
+                const devServer = createDevServer(HOST, port, [ createKongDevMiddleware(FilesGenerator.reBuild) ])
+                return devServer
             }
         },
     )
@@ -65,20 +67,6 @@ buildDll('development')
                 devServer.close()
                 process.exit()
             })
-        })
-        const addWatcher = watch(paths.appSrcPages).on('add', (e, path) => {
-            console.log(e, path)
-            FilesGenerator.reBuild()
-            // devServer.close()
-            // watcher.close()
-            // process.send({ type: 'RESTART' })
-        })
-        const removeWatcher=watch(paths.appSrcPages).on('unlink', (e, path) => {
-            console.log(e, path)
-            FilesGenerator.reBuild()
-            // devServer.close()
-            // watcher.close()
-            // process.send({ type: 'RESTART' })
         })
     })
     .catch(err => {

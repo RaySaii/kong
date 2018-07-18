@@ -9,7 +9,7 @@ const ignoredFiles = require('react-dev-utils/ignoredFiles')
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
 const host = process.env.HOST || '0.0.0.0'
 
-export default function createDevServerConfig(proxy, allowedHost) {
+export default function createDevServerConfig(proxy, allowedHost, middlewares) {
     return {
         // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
         // websites from potentially accessing local content through DNS rebinding:
@@ -94,6 +94,11 @@ export default function createDevServerConfig(proxy, allowedHost) {
             // it used the same host and port.
             // https://github.com/facebookincubator/create-react-app/issues/2272#issuecomment-302832432
             app.use(noopServiceWorkerMiddleware())
+            if (middlewares) {
+                middlewares.forEach(middleware => {
+                    app.use(middleware)
+                })
+            }
         },
     }
 }

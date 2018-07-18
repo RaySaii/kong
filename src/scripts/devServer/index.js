@@ -11,7 +11,7 @@ import chalk from 'chalk'
 const isInteractive = process.stdout.isTTY
 
 
-export default function startDevServer(HOST, port) {
+export default function createDevServer(HOST, port, middlewares) {
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
     const appName = require(paths.appPackageJson).name
     const urls = prepareUrls(protocol, HOST, port)
@@ -24,6 +24,7 @@ export default function startDevServer(HOST, port) {
     const serverConfig = createDevServerConfig(
         proxyConfig,
         urls.lanUrlForConfig,
+        middlewares,
     )
     const devServer = new WebpackDevServer(compiler, serverConfig)
     devServer.listen(port, HOST, err => {

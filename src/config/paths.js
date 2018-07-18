@@ -16,7 +16,7 @@ export const appIndex = () => resolveApp('src/pages/.kong/kong.js')
 
 const paths = {
     appBuild: resolveApp('build'),
-    appDll: resolveApp('dll'),
+    appDll: resolveApp('node_modules/kong-dll'),
     appPublic: resolveApp('public'),
     appHtml: resolveApp('public/index.html'),
     appNodeModules: resolveApp('node_modules'),

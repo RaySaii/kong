@@ -30,7 +30,7 @@ export const commonResolve = {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.appSrc, [ paths.appPackageJson ]),
+        // new ModuleScopePlugin(paths.appSrc, [ paths.appPackageJson ]),
     ],
 }
 export const optimization = {
@@ -85,7 +85,7 @@ export function getStyleLoader(env, cssLoader) {
             // https://github.com/facebookincubator/create-react-app/issues/2677
             ident: 'postcss',
             plugins: () => [
-                require('postcss-flexbugs-fixes'),
+                require.resolve('postcss-flexbugs-fixes'),
                 autoprefixer({
                     browsers: [
                         '>1%',

@@ -22,6 +22,28 @@ const nodeBabelConfig = {
         [ require.resolve('@babel/preset-stage-2'), { decoratorsLegacy: true } ],
     ],
 }
+const browserBabelConfig = {
+    presets: [
+        [
+            require.resolve('@babel/preset-env'),
+            {
+                targets: {
+                    browsers: [ 'last 2 versions', 'IE 10' ],
+                },
+            },
+        ],
+        require.resolve('@babel/preset-react'),
+        [ require.resolve('@babel/preset-stage-2'), { decoratorsLegacy: true } ],
+    ],
+}
+
+const BROWSER_FILES = [
+    'src/scripts/Compiling.js',
+]
+
+function isBrowserTransform(path) {
+    return BROWSER_FILES.includes(path.replace(`${slash(cwd)}/`, ''))
+}
 
 const cwd = process.cwd()
 
@@ -29,12 +51,13 @@ const cwd = process.cwd()
 function transform(opts = {}) {
     const { content, path } = opts
     const winPath = slash(path)
+    const isBrowser = isBrowserTransform(winPath)
     console.log(
-        chalk.blue(
+        chalk[ isBrowser ? 'yellow' : 'blue' ](
             `[TRANSFORM] ${winPath.replace(`${cwd}/`, '')}`,
         ),
     )
-    const config = nodeBabelConfig
+    const config = isBrowser ? browserBabelConfig : nodeBabelConfig
     return babel.transform(content, config).code
 }
 

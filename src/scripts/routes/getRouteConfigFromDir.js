@@ -4,7 +4,7 @@ import finder from 'findit'
 export default function getRouteConfigFromDir() {
     const find = finder(paths.appSrcPages)
 
-    let pathStr = ''
+    let routes = []
 
     find.on('file', (absPath, stat) => {
         let validPath = absPath.replace(/.*(?<=pages)/g, '')
@@ -14,10 +14,10 @@ export default function getRouteConfigFromDir() {
 
         const routePath = validPath.replace(/\/\$/, '/:')
         const filePath = '..' + validPath
-        pathStr += `'${routePath}':require('${filePath}').default,`
+        routes[ routePath ] = filePath
     })
 
     return new Promise(resolve => {
-        find.on('end', () => resolve('{' + pathStr + '}'))
+        find.on('end', () => resolve(routes))
     })
 }

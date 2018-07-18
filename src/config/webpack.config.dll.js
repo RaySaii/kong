@@ -11,7 +11,16 @@ export default function getConfig(env) {
         devtool: 'source-map',
         mode: env,
         entry: {
-            vendor: [ 'react', 'rxjs', 'react-dom' ], // common模块打包到一个动态连接库
+            vendor: [
+                'react',
+                'rxjs',
+                'react-dom',
+                '@cycle/rxjs-run',
+                '@cycle/history',
+                '@sunny-g/cycle-react-driver',
+                'switch-path',
+                'cyclic-router',
+            ], // common模块打包到一个动态连接库
         },
         output: {
             path: paths.appDll,

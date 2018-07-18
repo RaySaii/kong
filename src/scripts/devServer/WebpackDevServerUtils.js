@@ -132,7 +132,6 @@ function createCompiler(webpack, config, appName, urls, useYarn) {
     // bundle, so if you refresh, it'll wait instead of serving the old one.
     // "invalid" is short for "bundle invalidated", it doesn't imply any errors.
     compiler.hooks.invalid.tap('invalid', (e,a) => {
-        console.log(e)
         if (isInteractive) {
             // clearConsole();
         }
