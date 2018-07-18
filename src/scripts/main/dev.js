@@ -2,7 +2,6 @@
 
 import FilesGenerator from '../FilesGenerator'
 import paths from '../../config/paths'
-import watch from '../watch'
 import createKongDevMiddleware from '../routes/createKongDevMiddleware'
 
 // Makes the script crash on unhandled rejections instead of silently
@@ -11,7 +10,7 @@ import createKongDevMiddleware from '../routes/createKongDevMiddleware'
 process.on('unhandledRejection', err => {
     throw err
 })
-
+process.env.NODE_ENV = 'development'
 // Ensure environment variables are read.
 const chalk = require('chalk')
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles')

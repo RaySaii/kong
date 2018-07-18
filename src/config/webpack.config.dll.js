@@ -6,7 +6,7 @@ const webpack = require('webpack')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 export default function getConfig(env) {
-    const opt = env === 'development' ? {} : optimization
+    const opt = env === 'development' ? {} : { optimization }
     return {
         devtool: 'source-map',
         mode: env,
@@ -29,7 +29,7 @@ export default function getConfig(env) {
         },
         ...opt,
         plugins: [
-            new CleanWebpackPlugin([ 'dll' ], { root: paths.appSrc }),
+            // new CleanWebpackPlugin([ 'kong-dll' ], { root: paths.appNodeModules }),
             new webpack.DllPlugin({
                 context: paths.appSrc,
                 name: '_dll_[name]_[hash]', // 和output.library中一致，也就是输出的manifest.json中的 name值

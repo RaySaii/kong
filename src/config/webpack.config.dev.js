@@ -31,7 +31,7 @@ const babelLoader = {
         presets: [ require.resolve('babel-preset-react-app') ],
         plugins: [
             [ 'lodash' ],
-            [ 'import', { style: 'css', libraryName: 'antd' } ],
+            // [ 'import', { style: 'css', libraryName: 'antd' } ],
         ],
         cacheDirectory: true,
         highlightCode: true,
@@ -129,7 +129,7 @@ module.exports = {
         // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
         // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
         // In development, this will be an empty string.
-        new InterpolateHtmlPlugin({ PUBLIC_URL: '/' }),
+        // new InterpolateHtmlPlugin({ PUBLIC_URL: '/' }),
         // Add module names to factory functions so they appear in browser profiler.
         new webpack.NamedModulesPlugin(),
         // Makes some environment variables available to the JS code, for example:

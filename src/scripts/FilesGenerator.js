@@ -1,4 +1,4 @@
-import paths from '../config/paths'
+import paths, {appKong} from '../config/paths'
 import {join} from 'path'
 import isEmpty from 'lodash/isEmpty'
 import getRouteConfigFromDir from './routes/getRouteConfigFromDir'
@@ -12,24 +12,18 @@ class IFilesGenerator {
     requestedRoutes = {}
     watcher = null
 
-    constructor() {
-        this.watcher = watch(paths.appSrcPages)
-            .on('add', (e, path) => this.reBuild())
-            .on('unlink', (e, path) => this.reBuild())
-    }
-
     closeWatcher() {
         this.watcher.close()
     }
 
     generateEntry() {
-        mkdirp.sync(join(paths.appSrcPages, '.kong'))
+        mkdirp.sync(appKong())
         // Generate umi.js
         let entryContent = readFileSync(
             join(getPaths('templates/entry.js.tpl')),
             'utf-8',
         )
-        writeFileSync(join(paths.appSrcPages, '.kong/kong.js'), entryContent, 'utf-8')
+        writeFileSync(join(appKong(), 'kong.js'), entryContent, 'utf-8')
     }
 
     sleep(dur) {
@@ -39,7 +33,9 @@ class IFilesGenerator {
     }
 
     resolveRoutes(routes) {
-        // return Object.keys(routes).reduce((str, key) => str + `'${key}':${routes[ key ]}`, '{') + '}'
+        if (process.env.NODE_ENV === 'production') {
+            return Object.keys(routes).reduce((str, key) => str + `'${key}':require('..${key}').default,`, '{') + '}'
+        }
         return Object.keys(routes)
             .reduce(
                 (str, key) => str + `'${key}':require('${
@@ -62,7 +58,7 @@ class IFilesGenerator {
             'utf-8',
         )
             .replace('<%= ROUTES %>', routes)
-        writeFileSync(join(paths.appSrcPages, '.kong/router.js'), routesContent, 'utf-8')
+        writeFileSync(join(appKong(), 'router.js'), routesContent, 'utf-8')
     }
 
     reBuild = (routePath) => {
@@ -73,6 +69,11 @@ class IFilesGenerator {
         this.generateEntry()
         await this.generateRoutes()
         await this.sleep(800)
+        if(process.env.NODE_ENV==='development'){
+            this.watcher = watch(paths.appSrcPages)
+                .on('add', (e, path) => this.reBuild())
+                .on('unlink', (e, path) => this.reBuild())
+        }
     }
 }
 
