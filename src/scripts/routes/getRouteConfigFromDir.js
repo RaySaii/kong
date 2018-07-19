@@ -7,6 +7,8 @@ export default function getRouteConfigFromDir() {
     let routes = []
 
     find.on('file', (absPath, stat) => {
+        const ignoreExtRex = /\.(sc|sa|le|c)ss$/
+        if (ignoreExtRex.test(absPath)) return
         let validPath = absPath.replace(/.*(?<=pages)/g, '')
             .replace(/\.(js|ts)x?/g, '')
             .replace(/\/index$/, '/')

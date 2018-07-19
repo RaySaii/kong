@@ -4,7 +4,6 @@ import paths, {appIndex, appKong} from '../../config/paths'
 import FilesGenerator from '../FilesGenerator'
 import rimraf from 'rimraf'
 
-process.env.NODE_ENV = 'production'
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
@@ -84,17 +83,17 @@ buildDll('production')
                     )
                     console.log()
 
-                    const appPackage = require(paths.appPackageJson)
-                    const publicUrl = paths.publicPath
-                    const publicPath = paths.publicPath
-                    const buildFolder = path.relative(process.cwd(), paths.appBuild)
-                    printHostingInstructions(
-                        appPackage,
-                        publicUrl,
-                        publicPath,
-                        buildFolder,
-                        useYarn,
-                    )
+                    // const appPackage = require(paths.appPackageJson)
+                    // const publicUrl = paths.publicPath
+                    // const publicPath = paths.publicPath
+                    // const buildFolder = path.relative(process.cwd(), paths.appBuild)
+                    // printHostingInstructions(
+                    //     appPackage,
+                    //     publicUrl,
+                    //     publicPath,
+                    //     buildFolder,
+                    //     useYarn,
+                    // )
                 },
                 err => {
                     console.log(chalk.red('Failed to compile.\n'))

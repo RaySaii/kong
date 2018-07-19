@@ -1,8 +1,11 @@
 import paths from './paths'
 import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin'
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import autoprefixer from 'autoprefixer'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import path from 'path'
+import getPaths from '../scripts/getPaths'
 
 export const commonResolve = {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -72,6 +75,7 @@ export const optimization = {
             cache: true,
             sourceMap: false,
         }),
+        new OptimizeCSSAssetsPlugin(),
     ],
 }
 
@@ -85,7 +89,7 @@ export function getStyleLoader(env, cssLoader) {
             // https://github.com/facebookincubator/create-react-app/issues/2677
             ident: 'postcss',
             plugins: () => [
-                require.resolve('postcss-flexbugs-fixes'),
+                require('postcss-flexbugs-fixes'),
                 autoprefixer({
                     browsers: [
                         '>1%',

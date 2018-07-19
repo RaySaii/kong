@@ -5,6 +5,10 @@ import {commonLoader, commonNode, commonResolve, getStyleLoader} from './weboack
 import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
 import SystemBellPlugin from 'system-bell-webpack-plugin'
 import ProgressBarPlugin from 'progress-bar-webpack-plugin'
+import HappyPack from 'happypack'
+import os from 'os'
+
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length })
 
 const path = require('path')
 const webpack = require('webpack')
@@ -30,14 +34,19 @@ const babelLoader = {
     options: {
         presets: [ require.resolve('babel-preset-react-app') ],
         plugins: [
-            [ 'lodash' ],
+            [ require.resolve('babel-plugin-lodash') ],
             // [ 'import', { style: 'css', libraryName: 'antd' } ],
         ],
         cacheDirectory: true,
         highlightCode: true,
     },
 }
-
+const happybabel = {
+    loader: require.resolve('happypack/loader'),
+    options: {
+        id: 'happybabel',
+    },
+}
 module.exports = {
     mode: 'development',
     devtool: 'cheap-module-source-map',
@@ -91,7 +100,7 @@ module.exports = {
                         include: paths.appSrc,
                         exclude: [ /node_modules/ ],
                         use: [
-                            babelLoader,
+                            happybabel,
                             {
                                 loader: require.resolve('awesome-typescript-loader'),
                                 options: {
@@ -106,9 +115,7 @@ module.exports = {
                         test: /\.(js|jsx|mjs)$/,
                         include: paths.appSrc,
                         exclude: [ /node_modules/ ],
-                        use: [
-                            babelLoader,
-                        ],
+                        use: [ happybabel ],
                     },
                     ...commonLoader,
                 ],
@@ -118,8 +125,14 @@ module.exports = {
         ],
     },
     plugins: [
+        new HappyPack({
+            id: 'happybabel',
+            loaders: [ babelLoader ],
+            threadPool: happyThreadPool,
+            verbose: true,
+        }),
         new ProgressBarPlugin(),
-        new HardSourceWebpackPlugin(),
+        // new HardSourceWebpackPlugin(),
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,

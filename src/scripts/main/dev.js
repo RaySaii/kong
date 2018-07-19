@@ -10,7 +10,6 @@ import createKongDevMiddleware from '../routes/createKongDevMiddleware'
 process.on('unhandledRejection', err => {
     throw err
 })
-process.env.NODE_ENV = 'development'
 // Ensure environment variables are read.
 const chalk = require('chalk')
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles')

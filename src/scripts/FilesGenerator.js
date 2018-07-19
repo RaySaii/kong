@@ -34,12 +34,12 @@ class IFilesGenerator {
 
     resolveRoutes(routes) {
         if (process.env.NODE_ENV === 'production') {
-            return Object.keys(routes).reduce((str, key) => str + `'${key}':require('..${key}').default,`, '{') + '}'
+            return Object.keys(routes).reduce((str, key) => str + `'${key}':require('../pages${key}').default,`, '{') + '}'
         }
         return Object.keys(routes)
             .reduce(
                 (str, key) => str + `'${key}':require('${
-                    routes[ key ] ? '..' + key : getPaths('scripts/Compiling.js')
+                    routes[ key ] ? '../pages' + key : getPaths('scripts/Compiling.js')
                     }').default,`, '{',
             ) + '}'
     }
@@ -68,7 +68,9 @@ class IFilesGenerator {
     async generate() {
         this.generateEntry()
         await this.generateRoutes()
-        await this.sleep(800)
+        if(process.env.NODE_ENV==='development'){
+            await this.sleep(2000)
+        }
         if(process.env.NODE_ENV==='development'){
             this.watcher = watch(paths.appSrcPages)
                 .on('add', (e, path) => this.reBuild())

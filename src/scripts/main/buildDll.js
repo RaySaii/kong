@@ -31,7 +31,7 @@ const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024
 // First, read the current file sizes in build directory.
 // This lets us display how much they changed later.
 function buildDll(env) {
-    if (env === 'development' && existsSync(paths.appDll)) return Promise.resolve()
+    process.env.NODE_ENV = env
     return measureFileSizesBeforeBuild(paths.appDll)
         .then(previousFileSizes => {
             // Remove all content but keep the directory so that
@@ -111,11 +111,11 @@ function build(previousFileSizes, env) {
                 )
                 return reject(new Error(messages.warnings.join('\n\n')))
             }
-            return setTimeout(()=>resolve({
+            return resolve({
                 stats,
                 previousFileSizes,
                 warnings: messages.warnings,
-            }),800)
+            })
         })
     })
 }

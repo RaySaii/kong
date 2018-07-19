@@ -1,13 +1,16 @@
-import { Observable } from 'rxjs'
-import { run } from '@cycle/rxjs-run'
-import { makeHistoryDriver } from '@cycle/history'
+import {Observable} from 'rxjs'
+import {run, setup} from '@cycle/rxjs-run'
+import {rerunner} from 'cycle-restart'
+import isolate from '@cycle/isolate'
+import {makeHistoryDriver} from '@cycle/history'
 import makeReactDOMDriver from '@sunny-g/cycle-react-driver'
 import switchPath from 'switch-path'
-import { routerify } from 'cyclic-router'
-import  'antd/dist/antd.css';
+import onionify from 'cycle-onionify'
+import {routerify} from 'cyclic-router'
+import 'antd/dist/antd.css'
+import mkDrivers from '../drivers'
 
 function main(sources) {
-    console.log(require('./router').default)
     const match$ = sources.router.define(require('./router').default)
     const page$ = match$.map(({ path, value }) => {
         return value(Object.assign({}, sources, {
@@ -23,10 +26,17 @@ function main(sources) {
     }
 }
 
-const mainWithRouting = routerify(main, switchPath)
+const wrapMain = (main) => routerify(onionify(main), switchPath)
+const App=wrapMain(main)
 
-run(mainWithRouting, {
-    REACT: makeReactDOMDriver(document.querySelector('#root')),
-    history: makeHistoryDriver(), // create history driver as usual,
-    // but it gets proxied by routerify
-})
+run(App, mkDrivers())
+
+if (module.hot) {
+    module.hot.accept('./router', () => {
+        run(App, mkDrivers())
+   })
+}
+
+
+
+

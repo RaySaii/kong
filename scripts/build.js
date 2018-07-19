@@ -103,7 +103,7 @@ function build() {
                 const relPath = fullPath.replace(`${cwd}/src/`, '')
                 const content = readFileSync(fullPath, 'utf-8')
                 try {
-                    const code = transform({
+                    const code = fullPath.endsWith('tpl') ? content : transform({
                         content,
                         path: fullPath,
                     })

@@ -4,11 +4,9 @@ import {commonLoader, commonNode, getStyleLoader, commonResolve} from './weboack
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import ProgressBarPlugin from 'progress-bar-webpack-plugin'
 
-const autoprefixer = require('autoprefixer')
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
@@ -16,7 +14,6 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -30,7 +27,6 @@ const publicPath = paths.publicPath
 // Get environment variables to inject into our app.
 
 // Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css'
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
@@ -45,7 +41,18 @@ const cssLoader = {
         localIdentName: '[local]___[hash:base64:5]',
     },
 }
-
+const babelLoader = {
+    loader: require.resolve('babel-loader'),
+    options: {
+        presets: [ require.resolve('babel-preset-react-app') ],
+        plugins: [
+            [ 'lodash' ],
+            // [ 'import', { style: 'css', libraryName: 'antd' } ],
+        ],
+        compact: true,
+        highlightCode: true,
+    },
+}
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -107,19 +114,7 @@ module.exports = {
                     {
                         test: /\.tsx?$/,
                         use: [
-                            {
-                                loader: require.resolve('babel-loader'),
-                                options: {
-                                    // cacheDirectory: true,
-                                    plugins: [
-                                        // [ 'import', {
-                                        //     libraryName: 'antd',
-                                        //     style: 'css',
-                                        // } ],
-                                        'lodash',
-                                    ],
-                                },
-                            },
+                            babelLoader,
                             {
                                 loader: require.resolve('awesome-typescript-loader'),
                                 options: {
@@ -133,10 +128,8 @@ module.exports = {
                     {
                         test: /\.(js|jsx|mjs)$/,
                         include: paths.appSrc,
-                        loader: require.resolve('babel-loader'),
-                        options: {
-                            compact: true,
-                        },
+                        exclude: [ /node_modules/ ],
+                        use: [ babelLoader ],
                     },
                     ...commonLoader,
                 ],
@@ -167,7 +160,10 @@ module.exports = {
 
         // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
         new MiniCssExtractPlugin({
-            filename: cssFilename,
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: 'static/css/[name].[contenthash:8].css',
+            chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
         // Generate a manifest file which contains a mapping of all asset filenames
         // to their corresponding output file so that tools can pick it up without
@@ -218,7 +214,6 @@ module.exports = {
         }),
         new AddAssetHtmlPlugin({
             filepath: path.join(paths.appDll, '*.dll.js'),
-            includeSourcemap: false
         }),
     ],
     // Some libraries import Node modules but don't use them in the browser.
