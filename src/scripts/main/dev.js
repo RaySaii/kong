@@ -16,7 +16,7 @@ const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles')
 const {
     choosePort,
 } = require('react-dev-utils/WebpackDevServerUtils')
-const buildDll = require('./buildDll')
+const buildDll = require('../buildDll')
 
 
 // Warn and crash if required files are missing

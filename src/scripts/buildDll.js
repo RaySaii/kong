@@ -3,7 +3,7 @@
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
-import getConfig from '../../config/webpack.config.dll'
+import getConfig from '../config/webpack.config.dll'
 import {existsSync} from 'fs'
 
 process.on('unhandledRejection', err => {
@@ -11,7 +11,7 @@ process.on('unhandledRejection', err => {
 })
 
 // Ensure environment variables are read.
-import paths from '../../config/paths'
+import paths from '../config/paths'
 
 const chalk = require('chalk')
 const fs = require('fs-extra')

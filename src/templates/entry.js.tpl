@@ -1,6 +1,5 @@
 import {Observable} from 'rxjs'
 import {run, setup} from '@cycle/rxjs-run'
-import {rerunner} from 'cycle-restart'
 import isolate from '@cycle/isolate'
 import {makeHistoryDriver} from '@cycle/history'
 import makeReactDOMDriver from '@sunny-g/cycle-react-driver'

@@ -46,7 +46,7 @@ const babelLoader = {
     options: {
         presets: [ require.resolve('babel-preset-react-app') ],
         plugins: [
-            [ 'lodash' ],
+            [ require.resolve('babel-plugin-lodash') ],
             // [ 'import', { style: 'css', libraryName: 'antd' } ],
         ],
         compact: true,
@@ -214,6 +214,7 @@ module.exports = {
         }),
         new AddAssetHtmlPlugin({
             filepath: path.join(paths.appDll, '*.dll.js'),
+            includeSourcemap:false
         }),
     ],
     // Some libraries import Node modules but don't use them in the browser.

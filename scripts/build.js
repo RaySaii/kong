@@ -72,7 +72,7 @@ function buildPkg() {
         ])
         .pipe(
             through.obj((f, enc, cb) => {
-                f.contents = f.path.endsWith('tpl') ?
+                f.contents = f.path.includes('templates') ?
                     f.contents
                     : new Buffer( // eslint-disable-line
                         transform({
@@ -103,7 +103,7 @@ function build() {
                 const relPath = fullPath.replace(`${cwd}/src/`, '')
                 const content = readFileSync(fullPath, 'utf-8')
                 try {
-                    const code = fullPath.endsWith('tpl') ? content : transform({
+                    const code = fullPath.includes('templates') ? content : transform({
                         content,
                         path: fullPath,
                     })
