@@ -1,6 +1,6 @@
 'use strict'
-import paths, {appIndex} from './paths'
-import {commonLoader, commonNode, getStyleLoader, commonResolve} from './weboack.config.base'
+import paths, {appDll, appIndex} from './paths'
+import {commonLoader, commonNode, getStyleLoader, commonResolve} from './webpack.config.base'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import ProgressBarPlugin from 'progress-bar-webpack-plugin'
 
@@ -209,12 +209,12 @@ module.exports = {
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new webpack.DllReferencePlugin({
             context: paths.appSrc,
-            manifest: require(path.join(paths.appDll, 'vendor.manifest.json')),
+            manifest: require(path.join(appDll('production'), 'vendor.manifest.json')),
             extensions: [ '.js', '.jsx' ],
         }),
         new AddAssetHtmlPlugin({
-            filepath: path.join(paths.appDll, '*.dll.js'),
-            includeSourcemap:false
+            filepath: path.join(appDll('production'), '*.dll.js'),
+            includeSourcemap: false,
         }),
     ],
     // Some libraries import Node modules but don't use them in the browser.

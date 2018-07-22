@@ -1,7 +1,7 @@
 'use strict'
 
-import paths, {appIndex, resolveTsConfig} from './paths'
-import {commonLoader, commonNode, commonResolve, getStyleLoader} from './weboack.config.base'
+import paths, {appDll, appIndex,} from './paths'
+import {commonLoader, commonNode, commonResolve, getStyleLoader} from './webpack.config.base'
 import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
 import SystemBellPlugin from 'system-bell-webpack-plugin'
 import ProgressBarPlugin from 'progress-bar-webpack-plugin'
@@ -129,10 +129,10 @@ module.exports = {
             id: 'happybabel',
             loaders: [ babelLoader ],
             threadPool: happyThreadPool,
-            verbose: true,
+            // verbose: true,
         }),
         new ProgressBarPlugin(),
-        // new HardSourceWebpackPlugin(),
+        new HardSourceWebpackPlugin(),
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,
@@ -167,11 +167,11 @@ module.exports = {
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new webpack.DllReferencePlugin({
             context: paths.appSrc,
-            manifest: require(path.join(paths.appDll, 'vendor.manifest.json')),
+            manifest: require(path.join(appDll('development'), 'vendor.manifest.json')),
             extensions: [ '.js', '.jsx' ],
         }),
         new AddAssetHtmlPlugin({
-            filepath: path.join(paths.appDll, '*.dll.js'),
+            filepath: path.join(appDll('development'), '*.dll.js'),
         }),
         new ManifestPlugin({
             fileName: 'asset-manifest.json',

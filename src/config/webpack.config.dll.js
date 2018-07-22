@@ -1,5 +1,5 @@
-import paths from './paths'
-import {optimization} from './weboack.config.base'
+import paths, {appDll} from './paths'
+import {optimization} from './webpack.config.base'
 
 const path = require('path')
 const webpack = require('webpack')
@@ -24,17 +24,17 @@ export default function getConfig(env) {
             ], // common模块打包到一个动态连接库
         },
         output: {
-            path: paths.appDll,
+            path: appDll(env),
             filename: '[name].dll.js', // 输出动态连接库的文件名称
             library: '_dll_[name]_[hash]', // 全局变量名称
         },
         ...opt,
         plugins: [
-            new CleanWebpackPlugin([ 'kong-dll' ], { root: paths.appNodeModules }),
+            new CleanWebpackPlugin([ 'kong-dll-' + env ], { root: paths.appNodeModules }),
             new webpack.DllPlugin({
                 context: paths.appSrc,
                 name: '_dll_[name]_[hash]', // 和output.library中一致，也就是输出的manifest.json中的 name值
-                path: path.join(paths.appDll, '[name].manifest.json'),
+                path: path.join(appDll(env), '[name].manifest.json'),
             }),
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(env),

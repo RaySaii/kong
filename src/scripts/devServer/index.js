@@ -30,9 +30,9 @@ export default function createDevServer(HOST, port, middlewares) {
     devServer.listen(port, HOST, err => {
         if (err) {
             return console.log(err)
-        }
+        }``
         if (isInteractive) {
-            // clearConsole()
+            clearConsole()
         }
         console.log(chalk.cyan('Starting the development server...\n'))
         openBrowser(urls.localUrlForBrowser)

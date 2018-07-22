@@ -5,13 +5,14 @@
 // terminate the Node.js process with a non-zero exit code.
 import getConfig from '../config/webpack.config.dll'
 import {existsSync} from 'fs'
+import {sync as isEmptyDir} from 'empty-dir'
 
 process.on('unhandledRejection', err => {
     throw err
 })
 
 // Ensure environment variables are read.
-import paths from '../config/paths'
+import paths, {appDll} from '../config/paths'
 
 const chalk = require('chalk')
 const fs = require('fs-extra')
@@ -32,11 +33,12 @@ const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024
 // This lets us display how much they changed later.
 function buildDll(env) {
     process.env.NODE_ENV = env
-    return measureFileSizesBeforeBuild(paths.appDll)
+    if (existsSync(appDll(env)) && !isEmptyDir(appDll(env))) return Promise.resolve()
+    return measureFileSizesBeforeBuild(appDll(env))
         .then(previousFileSizes => {
             // Remove all content but keep the directory so that
             // if you're in it, you don't end up in Trash
-            fs.emptyDirSync(paths.appDll)
+            fs.emptyDirSync(appDll(env))
             // Merge with the public folder
             // Start the webpack build
             return build(previousFileSizes, env)
@@ -64,7 +66,7 @@ function buildDll(env) {
                 printFileSizesAfterBuild(
                     stats,
                     previousFileSizes,
-                    paths.appDll,
+                    appDll(env),
                     WARN_AFTER_BUNDLE_GZIP_SIZE,
                     WARN_AFTER_CHUNK_GZIP_SIZE,
                 )

@@ -3,7 +3,6 @@
 .idea/
 build/
 dll/
-lib/
 .kong/
 node_modules/
 package-lock.json
