@@ -13,7 +13,7 @@
     "@cycle/history": "^6.10.0",
     "@cycle/http": "^14.9.0",
     "@cycle/isolate": "^3.3.0",
-    "@cycle/rxjs-run": "^8.0.0",
+    "@cycle/rxjs-run": "8.0.0",
     "@cycle/storage": "^5.0.3",
     "@sunny-g/cycle-react-driver": "^0.4.11",
     "antd": "^3.6.2",
@@ -21,7 +21,7 @@
     "lodash": "^4.17.10",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "rxjs": "^5.5.11",
+    "rxjs": "5.5.11",
     "@types/history": "^4.6.2",
     "cycle-onionify": "^6.1.0",
     "switch-path": "^1.2.0"

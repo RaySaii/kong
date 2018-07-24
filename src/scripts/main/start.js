@@ -1,6 +1,5 @@
 import getPaths from '../getPaths'
 import {fork} from 'child_process'
-import {run} from '@cycle/rxjs-run'
 
 process.env.BABEL_ENV = 'development'
 process.env.NODE_ENV = 'development'

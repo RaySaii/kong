@@ -5,7 +5,7 @@ import storageDriver from '@cycle/storage'
 
 export default function mkDrivers() {
     return {
-        REACT: makeReactDOMDriver(document.querySelector('#root')),
+        react: makeReactDOMDriver(document.querySelector('#root')),
         history: makeHistoryDriver(), // create history driver as usual,but it gets proxied by routerify
         http: makeHTTPDriver(),
         storage: storageDriver,

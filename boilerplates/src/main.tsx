@@ -1,6 +1,7 @@
 import React from 'react'
 import isolate from '@cycle/isolate'
 import * as Lens from './lens'
+import { once } from 'lodash'
 import { Observable } from 'rxjs'
 
 
@@ -34,12 +35,12 @@ export default function main(sources) {
         react: page$.switchMap(c => c.react).map(page => (
             <div>
                 dsdsdsds
-    {page}
-    </div>
-)),
-    http: page$.filter(c => c.http).switchMap(c => c.http),
+                {page}
+            </div>
+        )),
+        http: page$.filter(c => c.http).switchMap(c => c.http),
         onion: page$.filter(c => c.onion).switchMap(c => c.onion),
         router: page$.filter(c => c.router).switchMap(c => c.router), // Notice use of 'router' sink name,
-    // which proxies the original 'history' sink
-}
+        // which proxies the original 'history' sink
+    }
 }

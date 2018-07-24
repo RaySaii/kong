@@ -1,29 +1,31 @@
 import { Observable } from 'rxjs'
 import * as React from 'react'
 import { Button} from 'antd'
-import { cloneDeep } from 'lodash'
 import { initialState } from '../utils'
+import styles from './index.scss';
 
 export default function Home(sources) {
-    const router = sources.REACT.event('goOther').mapTo('/other')
-    console.count('home')
+    const router = sources.react.event('goOther').mapTo('/other')
     const initReducer = initialState({
         test: 1,
-    }).do(val => console.log('dsdsdsd', val))
-    const addReducer = sources.REACT.event('add').mapTo(state => ({
-        ...state,
-        test: state.test + 1,
-    }))
+    })
+    const addReducer = sources.react.event('add').mapTo(state => {
+        return ({
+            ...state,
+            test: state.test + 1,
+        })
+    })
     return {
-        REACT: sources.onion.state$.map(state =>
-            <div>
+        react: sources.onion.state$.map(state =>
+            <div className={styles.ok}>
                 {state.test}
-                <Button onClick={sources.REACT.handler('goOther')}>Go other</Button>
-                <Button onClick={sources.REACT.handler('add')}>add</Button>
+                dfasddsdsdsdsdsd
+                <Button onClick={sources.react.handler('goOther')}>Go other</Button>
+                <Button onClick={sources.react.handler('add')}>add</Button>
             </div>,
         ),
         onion: Observable.merge(initReducer, addReducer),
         router,
-        HTTP:Observable.of({url:'https://api.ldxxjs.cn/mushroom/map/level'})
+        http:Observable.of({url:'https://api.ldxxjs.cn/mushroom/map/level'})
     }
 }
