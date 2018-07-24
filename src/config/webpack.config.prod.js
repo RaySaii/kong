@@ -1,8 +1,14 @@
 'use strict'
 import paths, {appDll, appIndex} from './paths'
-import {commonLoader, commonNode, getStyleLoader, commonResolve} from './webpack.config.base'
+import {
+    commonLoader,
+    commonNode,
+    getStyleLoader,
+    commonResolve,
+    getCommonPlugins,
+    optimization,
+} from './webpack.config.base'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import ProgressBarPlugin from 'progress-bar-webpack-plugin'
 
 const path = require('path')
 const webpack = require('webpack')
@@ -37,7 +43,6 @@ const cssLoader = {
     options: {
         importLoaders: 1,
         modules: true,
-        minimize: true,
         localIdentName: '[local]___[hash:base64:5]',
     },
 }
@@ -82,7 +87,7 @@ module.exports = {
                 .replace(/\\/g, '/'),
     },
     resolve: commonResolve,
-
+    optimization,
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
     // {
@@ -113,6 +118,8 @@ module.exports = {
                     // Process JS with Babel.
                     {
                         test: /\.tsx?$/,
+                        include: paths.appSrc,
+                        exclude: [ /node_modules/ ],
                         use: [
                             babelLoader,
                             {
@@ -133,11 +140,13 @@ module.exports = {
                     },
                     ...commonLoader,
                 ],
-            } ],
+            },
+        ],
     },
     plugins: [
-        new ProgressBarPlugin(),
         new BundleAnalyzerPlugin(),
+        // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
+
         // new InterpolateHtmlPlugin(env.raw),
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
@@ -156,20 +165,11 @@ module.exports = {
                 minifyURLs: true,
             },
         }),
-        new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production') }),
-
-        // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
             filename: 'static/css/[name].[contenthash:8].css',
             chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-        }),
-        // Generate a manifest file which contains a mapping of all asset filenames
-        // to their corresponding output file so that tools can pick it up without
-        // having to parse `index.html`.
-        new ManifestPlugin({
-            fileName: 'asset-manifest.json',
         }),
         // Generate a service worker script that will precache, and keep up to date,
         // the HTML & assets that are part of the Webpack build.
@@ -201,21 +201,7 @@ module.exports = {
             // Don't precache sourcemaps (they're large) and build asset manifest:
             staticFileGlobsIgnorePatterns: [ /\.map$/, /asset-manifest\.json$/ ],
         }),
-        // Moment.js is an extremely popular library that bundles large locale files
-        // by default due to how Webpack interprets its code. This is a practical
-        // solution that requires the user to opt into importing specific locales.
-        // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
-        // You can remove this if you don't use Moment.js:
-        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-        new webpack.DllReferencePlugin({
-            context: paths.appSrc,
-            manifest: require(path.join(appDll('production'), 'vendor.manifest.json')),
-            extensions: [ '.js', '.jsx' ],
-        }),
-        new AddAssetHtmlPlugin({
-            filepath: path.join(appDll('production'), '*.dll.js'),
-            includeSourcemap: false,
-        }),
+        ...getCommonPlugins('production'),
     ],
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.

@@ -34,9 +34,17 @@ class IFilesGenerator {
         })
     }
 
+    getChunkName(name) {
+        return name.replace('../', '')
+            .replace('/', '_')
+            .replace(/\.(ts|js)x?/, '')
+    }
+
     resolveRoutes(routes) {
         // if (process.env.NODE_ENV === 'production') {
-        return Object.keys(routes).reduce((str, key) => str + `'${key}':require('../pages${key}').default,\n`, '{\n') + '}'
+        return Object.keys(routes).reduce((str, key) =>
+            str + `'${key}':()=>import(/* webpackChunkName: "${this.getChunkName(routes[ key ])}" */'${routes[ key ]}'),\n`, '{\n')
+            + '}'
         // }
         // return Object.keys(routes)
         //     .reduce(

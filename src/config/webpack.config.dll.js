@@ -36,9 +36,6 @@ export default function getConfig(env) {
                 name: '_dll_[name]_[hash]', // 和output.library中一致，也就是输出的manifest.json中的 name值
                 path: path.join(appDll(env), '[name].manifest.json'),
             }),
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(env),
-            }),
         ],
     }
 

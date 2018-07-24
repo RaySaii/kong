@@ -1,11 +1,15 @@
-import paths from './paths'
-import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin'
+import paths, {appDll} from './paths'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import autoprefixer from 'autoprefixer'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import path from 'path'
-import getPaths from '../scripts/getPaths'
+import ProgressBarPlugin from 'progress-bar-webpack-plugin'
+import AddAssetHtmlPlugin from 'add-asset-html-webpack-plugin'
+import ManifestPlugin from 'webpack-manifest-plugin'
+import webpack from 'webpack'
+import SystemBellPlugin from 'system-bell-webpack-plugin'
+import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin'
 
 export const commonResolve = {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -33,10 +37,18 @@ export const commonResolve = {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        // new ModuleScopePlugin(paths.appSrc, [ paths.appPackageJson ]),
+        new ModuleScopePlugin(paths.appSrc, [ paths.appPackageJson ]),
     ],
 }
 export const optimization = {
+    splitChunks: {
+        chunks: 'async', // 必须三选一： "initial" | "all"(推荐) | "async" (默认就是async)
+        minSize: 30000, // 最小尺寸，30000
+        minChunks: 2, // 最小 chunk ，默认1
+        maxAsyncRequests: 5, // 最大异步请求数， 默认5
+        maxInitialRequests: 3, // 最大初始化请求书，默认3
+        automaticNameDelimiter: '~',// 打包分隔符
+    },
     minimizer: [
         new UglifyJsPlugin({
             uglifyOptions: {
@@ -75,7 +87,9 @@ export const optimization = {
             cache: true,
             sourceMap: false,
         }),
-        new OptimizeCSSAssetsPlugin(),
+        new OptimizeCSSAssetsPlugin({
+            cssProcessorOptions: { discardComments: { removeAll: true }, zindex: false },
+        }),
     ],
 }
 
@@ -111,8 +125,9 @@ export function getStyleLoader(env, cssLoader) {
     }
     return [
         {
-            test: /\.(sc|sa|le|c)ss$/,
-            include: [ /global/, /node_modules/ ],
+            test: /\.css$/,
+            include: [ /global/, /antd/ ],
+            sideEffects: true,
             use: [
                 lastLoader,
                 require.resolve('css-loader'),
@@ -187,4 +202,25 @@ export const commonNode = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty',
+}
+
+export function getCommonPlugins(env) {
+    return [
+        new ProgressBarPlugin(),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new AddAssetHtmlPlugin({
+            filepath: path.join(appDll(env), '*.dll.js'),
+            includeSourcemap: env === 'production' ? false : true,
+        }),
+        new webpack.DllReferencePlugin({
+            context: paths.appSrc,
+            manifest: require(path.join(appDll(env), 'vendor.manifest.json')),
+            extensions: [ '.js', '.jsx' ],
+        }),
+        new ManifestPlugin({
+            fileName: 'asset-manifest.json',
+            // publicPath: '/',
+        }),
+        new SystemBellPlugin(),
+    ]
 }

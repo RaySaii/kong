@@ -9,14 +9,12 @@ export default function getRouteConfigFromDir() {
     find.on('file', (absPath, stat) => {
         const ignoreExtRex = /\.(sc|sa|le|c)ss$/
         if (ignoreExtRex.test(absPath)) return
-        let validPath = absPath.replace(/.*(?<=pages)/g, '')
+        let keyPath = absPath.replace(/.*(?<=pages)/g, '')
             .replace(/\.(js|ts)x?/g, '')
             .replace(/\/index$/, '/')
-        if (validPath.startsWith('/.')) return
-
-        const routePath = validPath.replace(/\/\$/, '/:')
-        const filePath = '..' + validPath
-        routes[ routePath ] = filePath
+            .replace(/\/\$/, '/:')
+        const filePath = '..' + absPath.replace(/.*(?=\/pages)/g, '')
+        routes[ keyPath ] = filePath
     })
 
     return new Promise(resolve => {

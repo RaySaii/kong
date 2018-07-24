@@ -13,7 +13,7 @@ export const resolveApp = relativePath => path.resolve(appDirectory, relativePat
 export const resolveTsConfig = relativePath => path.resolve(appDirectory, 'tsconfig.json')
 
 export const appKong = (fileName = '') =>
-    path.join(resolveApp('src'), '.kong' + (process.env.NODE_ENV === 'production' ? '-production' : ''), fileName)
+    path.join(resolveApp('src'), '.kong', fileName)
 
 export const appIndex = () => resolveApp(appKong() + '/kong.js')
 
