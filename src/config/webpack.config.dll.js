@@ -1,10 +1,19 @@
 import paths, {appDll} from './paths'
 import {optimization} from './webpack.config.base'
+import {resolve} from 'path'
 
+const { readFileSync, writeFileSync, existsSync } = require('fs')
 const path = require('path')
 const webpack = require('webpack')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-
+const isSimple = !existsSync(resolve(paths.appSrc, 'pages'))
+const vendor = [
+    'react',
+    'rxjs',
+    'react-dom',
+    '@cycle/rxjs-run',
+    '@sunny-g/cycle-react-driver',
+]
 export default function getConfig(env) {
     const dev = env === 'development'
     const opt = dev ? {} : { optimization }
@@ -12,16 +21,7 @@ export default function getConfig(env) {
         devtool: dev ? 'source-map' : false,
         mode: env,
         entry: {
-            vendor: [
-                'react',
-                'rxjs',
-                'react-dom',
-                '@cycle/rxjs-run',
-                '@cycle/history',
-                '@sunny-g/cycle-react-driver',
-                'switch-path',
-                'cyclic-router',
-            ], // common模块打包到一个动态连接库
+            vendor: isSimple ? vendor : vendor.concat([ '@cycle/history',  'switch-path', 'cyclic-router' ]),  // common模块打包到一个动态连接库
         },
         output: {
             path: appDll(env),

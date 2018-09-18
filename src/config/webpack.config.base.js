@@ -124,9 +124,10 @@ export function getStyleLoader(env, cssLoader) {
         },
     }
     return [
+        // 全局样式和外部样式
         {
             test: /\.css$/,
-            include: [ /global/, /antd/ ],
+            include: [ /global/, /node_modules/ ],
             sideEffects: true,
             use: [
                 lastLoader,
@@ -134,8 +135,30 @@ export function getStyleLoader(env, cssLoader) {
             ],
         },
         {
+            test: /\.s(c|a)ss$/,
+            include: [ /global/, /node_modules/ ],
+            sideEffects: true,
+            use: [
+                lastLoader,
+                { loader: require.resolve('css-loader'), options: { importLoaders: 2 } },
+                postLoader,
+                require.resolve('sass-loader'),
+            ],
+        },
+        {
+            test: /\.less$/,
+            include: [ /node_modules/, /global/ ],
+            use: [
+                lastLoader,
+                { loader: require.resolve('css-loader'), options: { importLoaders: 2 } },
+                postLoader,
+                require.resolve('less-loader'),
+            ],
+        },
+        // css-modules
+        {
             test: /\.css$/,
-            exclude: [ /node_modules/ ],
+            exclude: [ /node_modules/, /global/ ],
             use: [
                 lastLoader,
                 cssLoader,
@@ -144,6 +167,7 @@ export function getStyleLoader(env, cssLoader) {
         },
         {
             test: /\.s(c|a)ss$/,
+            exclude: [ /node_modules/, /global/ ],
             use: [
                 lastLoader,
                 preCssLoader,
@@ -153,6 +177,7 @@ export function getStyleLoader(env, cssLoader) {
         },
         {
             test: /\.less$/,
+            exclude: [ /node_modules/, /global/ ],
             use: [
                 lastLoader,
                 preCssLoader,
@@ -179,10 +204,11 @@ export const commonLoader = [
     {
         test: /jquery/,
         use: [ {
-            loader: 'expose-loader',
+            loader: require.resolve('expose-loader'),
             options: '$',
         } ],
     },
+    { test: /\.xml$/, loader: require.resolve('xml-loader') },
     {
         loader: require.resolve('file-loader'),
         // Exclude `js` files to keep "css" loader working as it injects

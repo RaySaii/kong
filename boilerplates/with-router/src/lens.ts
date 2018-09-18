@@ -1,4 +1,4 @@
-import { getState, update } from './utils'
+import { getState, update } from './utils/index'
 
 export const Home={
     get:state=>state,

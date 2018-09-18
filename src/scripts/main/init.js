@@ -22,7 +22,12 @@ function success(message) {
 
 function init() {
     const appName = process.argv[ 2 ]
-    const cwd = join(__dirname, '../../../boilerplates')
+    const type = process.argv[ 3 ]
+    const map = {
+        'Simple': 'simple',
+        'WithRouter': 'with-router',
+    }
+    const cwd = join(__dirname, `../../../boilerplates/${map[ type ]}`)
     const dest = process.cwd()
     const appDir = join(dest, appName)
 
@@ -41,7 +46,7 @@ function init() {
             info('rename', 'gitignore -> .gitignore')
             renameSync(join(appDir, 'gitignore'), join(appDir, '.gitignore'))
             info('run', 'npm install')
-            require('../install').default(appDir,printSuccess)
+            require('../install').default(appDir, printSuccess)
         })
         .resume()
 

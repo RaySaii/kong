@@ -4,3 +4,4 @@ declare module '*.scss' {
 }
 
 declare var require:any
+declare var classNames: any

@@ -1,10 +1,8 @@
 'use strict'
 
-import paths, {appDll, appIndex,} from './paths'
+import paths, { appIndex,} from './paths'
 import {commonLoader, commonNode, commonResolve, getCommonPlugins, getStyleLoader} from './webpack.config.base'
 import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
-import SystemBellPlugin from 'system-bell-webpack-plugin'
-import ProgressBarPlugin from 'progress-bar-webpack-plugin'
 import HappyPack from 'happypack'
 import os from 'os'
 
@@ -14,11 +12,8 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const eslintFormatter = require('react-dev-utils/eslintFormatter')
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
 
 const cssLoader = {
     loader: require.resolve('css-loader'),
@@ -36,6 +31,7 @@ const babelLoader = {
         plugins: [
             [ require.resolve('babel-plugin-lodash') ],
             [ require.resolve('@babel/plugin-syntax-dynamic-import') ],
+            [ require.resolve('@babel/plugin-proposal-class-properties') ],
             // [ 'import', { style: 'css', libraryName: 'antd' } ],
         ],
         cacheDirectory: true,
@@ -132,7 +128,7 @@ module.exports = {
             threadPool: happyThreadPool,
             // verbose: true,
         }),
-        new HardSourceWebpackPlugin(),
+        // new HardSourceWebpackPlugin(),
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,

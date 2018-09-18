@@ -5,6 +5,8 @@ const chalk = require('chalk')
 const { join } = require('path')
 const { existsSync } = require('fs')
 
+const inquirer = require('inquirer')
+
 const script = process.argv[ 2 ]
 const args = process.argv.slice(3)
 
@@ -22,6 +24,20 @@ if (major * 10 + minor * 1 < 65) {
 const updater = require('update-notifier')
 const pkg = require('../package.json')
 updater({ pkg: pkg }).notify({ defer: true })
+
+async function init(script) {
+    const { type } = await inquirer.prompt({
+        name: 'type',
+        message: '模板类型',
+        type: 'list',
+        default: 0,
+        choices: [
+            'Simple',
+            'WithRouter',
+        ],
+    })
+    runScript(script, [ ...args, type ], true)
+}
 
 function runScript(script, args, isFork) {
     if (isFork) {
@@ -49,9 +65,11 @@ switch (aliasedScript) {
             console.log(chalk.cyan('@local'))
         }
         break
+    case 'init':
+        init(aliasedScript)
+        break
     case 'build':
     case 'start':
-    case 'init':
     case 'generate':
         runScript(aliasedScript, args, /* isFork */true)
         break

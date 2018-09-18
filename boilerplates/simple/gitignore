@@ -11,5 +11,6 @@
 .DS_Store
 npm-debug.log*
 
-./kong
+./src/.kong
+.idea
 package-lock.json

@@ -1,9 +1,9 @@
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import pick from 'lodash/pick'
 import isEqual from 'lodash/isEqual'
 
 export function initialState(state) {
-    return Observable.of(prevState =>
+    return of(prevState =>
         typeof prevState !== 'undefined'
             ? { ...prevState, ...state }
             : state,

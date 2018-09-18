@@ -29,6 +29,6 @@ const paths = {
     appSrc: resolveApp('src'),
     appSrcPages: resolveApp('src/pages'),
     testsSetup: resolveApp('src/setupTests.js'),
-    publicPath: './',
+    publicPath: '/',
 }
 export default paths

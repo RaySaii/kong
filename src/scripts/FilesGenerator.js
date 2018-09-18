@@ -1,5 +1,5 @@
 import paths, {appKong} from '../config/paths'
-import {join} from 'path'
+import {join, resolve} from 'path'
 import isEmpty from 'lodash/isEmpty'
 import getRouteConfigFromDir from './routes/getRouteConfigFromDir'
 import * as mkdirp from 'mkdirp'
@@ -17,15 +17,22 @@ class IFilesGenerator {
         this.watcher.close()
     }
 
-    generateEntry() {
+    async generateEntry() {
         if (existsSync(appKong()) && existsSync(appKong('kong.js'))) return
         mkdirp.sync(appKong())
         // Generate umi.js
+        const isSimple = !existsSync(resolve(paths.appSrc, 'pages'))
+        const content = isSimple
+            ? 'const wrapMain = (main) => onionify(main)'
+            : 'import {routerify} from "cyclic-router" \n' +
+            'import switchPath from "switch-path" \n ' +
+            'const wrapMain = (main) => routerify(onionify(main), switchPath)'
         let entryContent = readFileSync(
             join(getPaths('templates/entry.js.tpl')),
             'utf-8',
-        )
+        ).replace('<%= WRAPMAIN %>', content)
         writeFileSync(join(appKong(), 'kong.js'), entryContent, 'utf-8')
+        !isSimple && await this.generateRoutes()
     }
 
     sleep(dur) {
@@ -75,6 +82,12 @@ class IFilesGenerator {
         )
             .replace('<%= ROUTES %>', routes)
         writeFileSync(join(appKong(), 'router.js'), routesContent, 'utf-8')
+        if (process.env.NODE_ENV === 'development') {
+            if (this.watcher) return
+            this.watcher = watch(paths.appSrcPages)
+                .on('add', (e, path) => this.reBuild())
+                .on('unlink', (e, path) => this.reBuild())
+        }
     }
 
     reBuild = (routePath) => {
@@ -83,13 +96,6 @@ class IFilesGenerator {
 
     async generate() {
         this.generateEntry()
-        await this.generateRoutes()
-        if (process.env.NODE_ENV === 'development') {
-            if (this.watcher) return
-            this.watcher = watch(paths.appSrcPages)
-                .on('add', (e, path) => this.reBuild())
-                .on('unlink', (e, path) => this.reBuild())
-        }
     }
 }
 

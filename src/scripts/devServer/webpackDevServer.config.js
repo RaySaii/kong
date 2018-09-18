@@ -72,7 +72,7 @@ export default function createDevServerConfig(proxy, allowedHost, middlewares) {
         // https://github.com/facebookincubator/create-react-app/issues/1065
         watchOptions: {
             // ignored: ignoredFiles(paths.appSrc),
-            ignored: /(node_modules|config|scripts|tsconfig)/,
+            ignored: /(node_modules|scripts|tsconfig)/,
         },
         // Enable HTTPS if the HTTPS environment variable is set to 'true'
         https: protocol === 'https',

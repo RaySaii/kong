@@ -21,22 +21,8 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
-// Webpack uses `publicPath` to determine where the app is being served from.
-// It requires a trailing slash, or the file assets will get an incorrect path.
-const publicPath = paths.publicPath
-// Some apps do not use client-side routing with pushState.
-// For these, "homepage" can be set to "." to enable relative asset paths.
-// Source maps are resource heavy and can cause out of memory issue for large source files.
-// `publicUrl` is just like `publicPath`, but we will provide it to our app
-// as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-// Get environment variables to inject into our app.
-
-// Note: defined here because it will be used more than once.
-
-// ExtractTextPlugin expects the build output to be flat.
-// (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
-// However, our output is structured with css, js and media folders.
+const envPublicPath = process.env.PUBLIC_PATH
+const publicPath = envPublicPath || paths.publicPath
 
 const cssLoader = {
     loader: require.resolve('css-loader'),
@@ -53,6 +39,7 @@ const babelLoader = {
         plugins: [
             [ require.resolve('babel-plugin-lodash') ],
             [ require.resolve('@babel/plugin-syntax-dynamic-import') ],
+            [ require.resolve('@babel/plugin-proposal-class-properties') ],
             // [ 'import', { style: 'css', libraryName: 'antd' } ],
         ],
         compact: true,

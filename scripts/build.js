@@ -19,7 +19,11 @@ const nodeBabelConfig = {
                 },
             },
         ],
-        [ require.resolve('@babel/preset-stage-2'), { decoratorsLegacy: true } ],
+    ],
+    plugins: [
+        require.resolve('@babel/plugin-proposal-export-default-from'),
+        require.resolve('@babel/plugin-proposal-do-expressions'),
+        require.resolve('@babel/plugin-proposal-class-properties'),
     ],
 }
 const browserBabelConfig = {
@@ -33,7 +37,10 @@ const browserBabelConfig = {
             },
         ],
         require.resolve('@babel/preset-react'),
-        [ require.resolve('@babel/preset-stage-2'), { decoratorsLegacy: true } ],
+    ],
+    plugins: [
+        require.resolve('@babel/plugin-proposal-export-default-from'),
+        require.resolve('@babel/plugin-proposal-do-expressions'),
     ],
 }
 
@@ -86,7 +93,6 @@ function buildPkg() {
         .pipe(vfs.dest(`./lib/`))
 }
 
-// buildPkg('umi');
 function build() {
     const dirs = readdirSync(join(cwd, 'src'))
     const arg = process.argv[ 2 ]
